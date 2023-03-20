@@ -6,7 +6,12 @@ import (
 	"io"
 	"math/big"
 
-	bo "github.com/vault-thirteen/TIFFermodels/ByteOrder"
+	"github.com/vault-thirteen/TIFFer/helper"
+	"github.com/vault-thirteen/TIFFer/models"
+	bo "github.com/vault-thirteen/TIFFer/models/ByteOrder"
+	tag "github.com/vault-thirteen/TIFFer/models/Tag"
+	t "github.com/vault-thirteen/TIFFer/models/Type"
+	bt "github.com/vault-thirteen/TIFFer/models/basic-types"
 	"github.com/vault-thirteen/auxie/NTS"
 )
 

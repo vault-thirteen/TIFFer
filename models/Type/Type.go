@@ -3,7 +3,7 @@ package t
 // The word 'type' is reserved by Go language.
 // Well, you reap what you sow. Ha-ha.
 
-import bt "github.com/vault-thirteen/TIFFermodels/basic-types"
+import bt "github.com/vault-thirteen/TIFFer/models/basic-types"
 
 const (
 	Byte      = 1  // Byte.

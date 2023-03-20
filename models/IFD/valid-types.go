@@ -1,8 +1,8 @@
 package ifd
 
 import (
-	"github.com/vault-thirteen/TIFFermodels/Tag"
-	"github.com/vault-thirteen/TIFFermodels/Type"
+	"github.com/vault-thirteen/TIFFer/models/Tag"
+	"github.com/vault-thirteen/TIFFer/models/Type"
 )
 
 const ErrTypeIsNotValid = "type is not valid: %v"

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/vault-thirteen/TIFFerhelper"
+	"github.com/vault-thirteen/TIFFer/helper"
 )
 
 const (

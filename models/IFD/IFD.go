@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/vault-thirteen/TIFFerhelper"
-	"github.com/vault-thirteen/TIFFermodels"
-	"github.com/vault-thirteen/TIFFermodels/ByteOrder"
-	"github.com/vault-thirteen/TIFFermodels/Tag"
-	"github.com/vault-thirteen/TIFFermodels/basic-types"
+	"github.com/vault-thirteen/TIFFer/helper"
+	"github.com/vault-thirteen/TIFFer/models"
+	"github.com/vault-thirteen/TIFFer/models/ByteOrder"
+	"github.com/vault-thirteen/TIFFer/models/Tag"
+	"github.com/vault-thirteen/TIFFer/models/basic-types"
 )
 
 const (

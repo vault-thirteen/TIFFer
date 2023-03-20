@@ -5,12 +5,14 @@ import (
 	"math/big"
 	"os"
 
-	tiff "github.com/vault-thirteen/TIFFermodels/TIFF"
+	tiff "github.com/vault-thirteen/TIFFer/models/TIFF"
+	tag "github.com/vault-thirteen/TIFFer/models/Tag"
+	bt "github.com/vault-thirteen/TIFFer/models/basic-types"
 	"github.com/vault-thirteen/errorz"
 )
 
 const UsageHint = `Usage:
-	example.exe <TiffFile>`
+	example.exe file.tiff`
 
 const ExitCodeArgumentsError = 1
 

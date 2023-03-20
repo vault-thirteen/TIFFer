@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/vault-thirteen/TIFFerhelper"
-	"github.com/vault-thirteen/TIFFermodels"
-	"github.com/vault-thirteen/TIFFermodels/ByteOrder"
-	ifd "github.com/vault-thirteen/TIFFermodels/IFD"
-	"github.com/vault-thirteen/TIFFermodels/MagicNumber"
-	"github.com/vault-thirteen/TIFFermodels/basic-types"
+	"github.com/vault-thirteen/TIFFer/helper"
+	"github.com/vault-thirteen/TIFFer/models"
+	"github.com/vault-thirteen/TIFFer/models/ByteOrder"
+	ifd "github.com/vault-thirteen/TIFFer/models/IFD"
+	"github.com/vault-thirteen/TIFFer/models/MagicNumber"
+	"github.com/vault-thirteen/TIFFer/models/basic-types"
 )
 
 // Header is the Image File Header described in the TIFF 6.0 Specification.

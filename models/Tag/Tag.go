@@ -1,6 +1,6 @@
 package tag
 
-import bt "github.com/vault-thirteen/TIFFermodels/basic-types"
+import bt "github.com/vault-thirteen/TIFFer/models/basic-types"
 
 // Tags as per TIFF 6.0 Specification and some additional tags.
 //

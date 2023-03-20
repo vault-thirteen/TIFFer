@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"math/big"
+
+	bt "github.com/vault-thirteen/TIFFer/models/basic-types"
 )
 
 const ErrUnexpectedDataSize = "unexpected data size: %v vs %v"

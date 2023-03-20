@@ -3,9 +3,9 @@ package tiff
 import (
 	"fmt"
 
-	"github.com/vault-thirteen/TIFFermodels"
-	hdr "github.com/vault-thirteen/TIFFermodels/Header"
-	ifd "github.com/vault-thirteen/TIFFermodels/IFD"
+	"github.com/vault-thirteen/TIFFer/models"
+	hdr "github.com/vault-thirteen/TIFFer/models/Header"
+	ifd "github.com/vault-thirteen/TIFFer/models/IFD"
 )
 
 const (

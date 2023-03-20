@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/vault-thirteen/TIFFerhelper"
-	"github.com/vault-thirteen/TIFFermodels/ByteOrder"
-	"github.com/vault-thirteen/TIFFermodels/basic-types"
+	"github.com/vault-thirteen/TIFFer/helper"
+	"github.com/vault-thirteen/TIFFer/models/ByteOrder"
+	"github.com/vault-thirteen/TIFFer/models/basic-types"
 )
 
 const (

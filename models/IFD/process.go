@@ -4,16 +4,16 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"github.com/vault-thirteen/TIFFer/helper"
 	"io"
 	"math/big"
 	"unsafe"
 
-	"github.com/vault-thirteen/TIFFerhelper"
-	"github.com/vault-thirteen/TIFFermodels"
-	bo "github.com/vault-thirteen/TIFFermodels/ByteOrder"
-	tag "github.com/vault-thirteen/TIFFermodels/Tag"
-	"github.com/vault-thirteen/TIFFermodels/Type"
-	"github.com/vault-thirteen/TIFFermodels/basic-types"
+	"github.com/vault-thirteen/TIFFer/models"
+	bo "github.com/vault-thirteen/TIFFer/models/ByteOrder"
+	tag "github.com/vault-thirteen/TIFFer/models/Tag"
+	"github.com/vault-thirteen/TIFFer/models/Type"
+	"github.com/vault-thirteen/TIFFer/models/basic-types"
 )
 
 func (de *DirectoryEntry) processDataItemSize() (err error) {

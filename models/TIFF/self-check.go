@@ -4,24 +4,19 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.com/vault-thirteen/TIFFermodels"
-	"github.com/vault-thirteen/TIFFermodels/ByteOrder"
-	"github.com/vault-thirteen/TIFFermodels/Tag"
-	"github.com/vault-thirteen/TIFFermodels/Type"
-	"github.com/vault-thirteen/TIFFermodels/basic-types"
+	"github.com/vault-thirteen/TIFFer/models"
+	"github.com/vault-thirteen/TIFFer/models/Tag"
+	"github.com/vault-thirteen/TIFFer/models/Type"
+	"github.com/vault-thirteen/TIFFer/models/basic-types"
 )
 
 const ErrSizeErrorInType = "size error in type: %v"
 
 // doSelfCheck performs various self checks of the library.
 func doSelfCheck() (err error) {
-	endianTypes := []bo.ByteOrder{bo.BigEndian, bo.BigEndian}
-
-	for _, endianType := range endianTypes {
-		err = checkTypeSizes(endianType)
-		if err != nil {
-			return err
-		}
+	err = checkTypeSizes()
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -35,7 +30,7 @@ func doSelfCheck() (err error) {
 // Example. If for some reason someone decides to support bigger sizes and
 // changes WORD type to DWORD, the hard-coded 'PutUint32' method will become
 // useless for new type sizes.
-func checkTypeSizes(byteOrder bo.ByteOrder) (err error) {
+func checkTypeSizes() (err error) {
 	// These lists of constants are intentionally written inside the function !
 	const (
 		WordSize  = 2
