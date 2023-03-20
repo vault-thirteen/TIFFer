@@ -11,7 +11,7 @@ Writing and encoding data is also not part of this library.
 
 This library supports following tags:
 * **Baseline tags**  
-  (of the in the TIFF 6.0 Specification)
+  (of the TIFF 6.0 Specification)
 
 * **Extension tags**  
   (including but not limited to) 
