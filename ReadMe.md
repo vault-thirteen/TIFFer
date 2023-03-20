@@ -11,7 +11,8 @@ Writing and encoding data is also not part of this library.
 
 This library supports following tags:
 * Baseline tags specified in the TIFF 6.0 Specification
-* Extension tags, including XMP
+* Extension tags, including but not limited to: 
+  * XMP Tag
 * Private tags, including:
   * DNG Tags
   * EXIF Tags
