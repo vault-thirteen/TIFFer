@@ -9,7 +9,7 @@ This library supports reading and parsing TIFF tags and their values.
 Decoding of image formats is not supported by this library.  
 Writing and encoding data is also not part of this library.  
 
-This library supports following tags:
+This library supports tags of following categories:
 * **Baseline tags**  
   (of the TIFF 6.0 Specification)
 
