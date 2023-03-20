@@ -6,6 +6,7 @@ The main purpose of this library is reading meta-data from TIFF files.
 ## Description
 
 This library supports reading and parsing TIFF tags and their values.  
+
 Decoding of image formats is not supported by this library.  
 Writing and encoding data is also not a part of this library.  
 
