@@ -65,7 +65,7 @@ of the library can be viewed in the `example` folder.
   * Number of known tags
   * Number of unknown tags
   * Number of tags with a registered type rule
-  * Number of tags which have to type rule
+  * Number of tags which have no type rule
 
 ## Links
 * TIFF Tag Reference at AWARE SYSTEMS  
