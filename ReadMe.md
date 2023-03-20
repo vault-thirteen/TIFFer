@@ -17,7 +17,7 @@ This library supports following tags:
   * EXIF Tags
   * GPS Tags
   * Interoperability Tags
-  * IPTC Tags
+  * IPTC Tag
 
 The library is able to read tags stored in so called Sub-IFDs which is really 
 a bit of a "hack" of the TIFF encoding scheme. TIFF format was designed to 
