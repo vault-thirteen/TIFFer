@@ -29,7 +29,7 @@ of the library can be viewed in the `example` folder.
 * TIFF Tag Reference at AWARE SYSTEMS  
 https://www.awaresystems.be/imaging/tiff/tifftags.html
 
-* TIFF 6.0 Specification (Revision 6.0 Final — June 3, 1992)
+* TIFF 6.0 Specification (Revision 6.0 Final — June 3, 1992)  
 https://developer.adobe.com/content/dam/udp/en/open/standards/tiff/TIFF6.pdf
 
 ## History
