@@ -1,6 +1,6 @@
 # TIFFer
 
-A library for parsing TIFF files.  
+A library for parsing TIFF format.  
 The main purpose of this library is reading meta-data from TIFF files.  
 
 ## Description
