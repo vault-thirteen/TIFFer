@@ -15,15 +15,15 @@ This library supports following tags:
 
 * **Extension tags**  
   (including but not limited to) 
-  * XMP Tag
+  * XMP tag
 
 * **Private tags**  
   (including but not limited to)
-  * DNG Tags
-  * EXIF Tags
-  * GPS Tags
-  * Interoperability Tags
-  * IPTC Tag
+  * DNG tags
+  * EXIF tags
+  * GPS tags
+  * Interoperability tags
+  * IPTC tag
 
 The library is able to read tags stored in so called Sub-IFDs which is really 
 a bit of a "hack" of the TIFF encoding scheme. TIFF format was designed to 
