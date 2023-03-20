@@ -18,7 +18,7 @@ This library supports tags of following categories:
 
 * **Extension tags**  
   (including but not limited to) 
-  * XMP tag
+  * XMP
 
 
 * **Private tags**  
