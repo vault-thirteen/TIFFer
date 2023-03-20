@@ -19,11 +19,23 @@ This library supports tags of following categories:
 
 * **Private tags**  
   (including but not limited to)
-  * DNG tags
+  * Alias Sketchbook Pro 
+  * DNG
+  * GDAL
+  * GeoTIFF
+  * HylaFAX
+  * ICC Profile 
+  * Intergraph Application
+  * IPTC
+  * Molecular Dynamics GEL
+  * Oce
+  * Wang Annotation
+
+* **Private IFD tags**  
+  (including but not limited to)
   * EXIF tags
   * GPS tags
   * Interoperability tags
-  * IPTC tag
 
 The library is able to read tags stored in so called Sub-IFDs which is really 
 a bit of a "hack" of the TIFF encoding scheme. TIFF format was designed to 
