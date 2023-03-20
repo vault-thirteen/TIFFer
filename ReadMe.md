@@ -33,9 +33,9 @@ This library supports tags of following categories:
 
 * **Private IFD tags**  
   (including but not limited to)
-  * EXIF tags
-  * GPS tags
-  * Interoperability tags
+  * EXIF
+  * GPS
+  * Interoperability
 
 The library is able to read tags stored in so called Sub-IFDs which is really 
 a bit of a "hack" of the TIFF encoding scheme. TIFF format was designed to 
