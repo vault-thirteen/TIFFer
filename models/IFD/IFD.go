@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/vault-thirteen/TIFFer/helper"
 	"github.com/vault-thirteen/TIFFer/models"
 	"github.com/vault-thirteen/TIFFer/models/ByteOrder"
 	"github.com/vault-thirteen/TIFFer/models/Tag"
 	"github.com/vault-thirteen/TIFFer/models/basic-types"
+	"github.com/vault-thirteen/auxie/reader"
 )
 
 const (
@@ -50,11 +50,7 @@ type IFD struct {
 // NewIFD constructs a first-pass model of an IFD from the stream.
 // First-pass model means that we collect tags, data item models, data item
 // counts, data item value offsets, but we do not read actual values.
-func NewIFD(
-	rs models.ReaderSeeker,
-	byteOrder bo.ByteOrder,
-	ifdOffset models.OffsetOfIFD,
-) (i *IFD, err error) {
+func NewIFD(rs *reader.Reader, byteOrder bo.ByteOrder, ifdOffset models.OffsetOfIFD) (i *IFD, err error) {
 	_, err = rs.Seek(int64(ifdOffset), io.SeekStart)
 	if err != nil {
 		return nil, err
@@ -71,13 +67,13 @@ func NewIFD(
 }
 
 // newIFD_BE is an IFD first-pass constructor using big endian byte order.
-func newIFD_BE(r io.Reader) (i *IFD, err error) {
+func newIFD_BE(rs *reader.Reader) (i *IFD, err error) {
 	i = &IFD{
 		Statistics: new(Statistics),
 	}
 
 	// Number of Directory Entries.
-	i.NumberOfDirectoryEntries, err = helper.ReadWord_BE(r)
+	i.NumberOfDirectoryEntries, err = rs.ReadWord_BE()
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +82,7 @@ func newIFD_BE(r io.Reader) (i *IFD, err error) {
 	i.DirectoryEntries = make([]*DirectoryEntry, 0)
 	var e *DirectoryEntry
 	for j := bt.Word(0); j < i.NumberOfDirectoryEntries; j++ {
-		e, err = NewDE(r, bo.BigEndian)
+		e, err = NewDE(rs, bo.BigEndian)
 		if err != nil {
 			return nil, err
 		}
@@ -95,7 +91,7 @@ func newIFD_BE(r io.Reader) (i *IFD, err error) {
 	}
 
 	// OffsetOfValue of next IFD.
-	i.OffsetOfNextIFD, err = helper.ReadDWord_BE(r)
+	i.OffsetOfNextIFD, err = rs.ReadDWord_BE()
 	if err != nil {
 		return nil, err
 	}
@@ -104,13 +100,13 @@ func newIFD_BE(r io.Reader) (i *IFD, err error) {
 }
 
 // newIFD_LE is an IFD first-pass constructor using little endian byte order.
-func newIFD_LE(r io.Reader) (i *IFD, err error) {
+func newIFD_LE(rs *reader.Reader) (i *IFD, err error) {
 	i = &IFD{
 		Statistics: new(Statistics),
 	}
 
 	// Number of Directory Entries.
-	i.NumberOfDirectoryEntries, err = helper.ReadWord_LE(r)
+	i.NumberOfDirectoryEntries, err = rs.ReadWord_LE()
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +115,7 @@ func newIFD_LE(r io.Reader) (i *IFD, err error) {
 	i.DirectoryEntries = make([]*DirectoryEntry, 0)
 	var e *DirectoryEntry
 	for j := bt.Word(0); j < i.NumberOfDirectoryEntries; j++ {
-		e, err = NewDE(r, bo.LittleEndian)
+		e, err = NewDE(rs, bo.LittleEndian)
 		if err != nil {
 			return nil, err
 		}
@@ -128,7 +124,7 @@ func newIFD_LE(r io.Reader) (i *IFD, err error) {
 	}
 
 	// OffsetOfValue of next IFD.
-	i.OffsetOfNextIFD, err = helper.ReadDWord_LE(r)
+	i.OffsetOfNextIFD, err = rs.ReadDWord_LE()
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +139,7 @@ func (i *IFD) IsLast() bool {
 
 // ProcessValues processes values of the IFD.
 // Here we read values and try to decode (parse) them.
-func (i *IFD) ProcessValues(rs models.ReaderSeeker, byteOrder bo.ByteOrder) (err error) {
+func (i *IFD) ProcessValues(rs *reader.Reader, byteOrder bo.ByteOrder) (err error) {
 	for _, curDE := range i.DirectoryEntries {
 		err = curDE.ProcessValues(rs, byteOrder)
 		if err != nil {
@@ -190,7 +186,7 @@ func (i *IFD) processDEMaps() (err error) {
 
 // ProcessSubIFDs processes sub-IFDs of the IFD.
 // Here we read sub-IFDs of all tags who have them.
-func (i *IFD) ProcessSubIFDs(rs models.ReaderSeeker, byteOrder bo.ByteOrder) (err error) {
+func (i *IFD) ProcessSubIFDs(rs *reader.Reader, byteOrder bo.ByteOrder) (err error) {
 	for _, curDE := range i.DirectoryEntries {
 		err = curDE.ProcessSubIFDs(rs, byteOrder)
 		if err != nil {

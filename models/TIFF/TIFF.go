@@ -3,9 +3,9 @@ package tiff
 import (
 	"fmt"
 
-	"github.com/vault-thirteen/TIFFer/models"
 	hdr "github.com/vault-thirteen/TIFFer/models/Header"
 	ifd "github.com/vault-thirteen/TIFFer/models/IFD"
+	"github.com/vault-thirteen/auxie/reader"
 )
 
 const (
@@ -43,7 +43,7 @@ type TIFF struct {
 // for those tags which we are interested in. On the third pass we collect
 // information about so-called Sub-IFDs, which are not a part of the
 // TIFF 6.0 Specification, but they are used by some tools.
-func New(rs models.ReaderSeeker) (t *TIFF, err error) {
+func New(rs *reader.Reader) (t *TIFF, err error) {
 	t = &TIFF{
 		ifds: make([]*ifd.IFD, 0),
 	}
@@ -82,7 +82,7 @@ func New(rs models.ReaderSeeker) (t *TIFF, err error) {
 
 // readPassOne performs a first read pass of the TIFF object.
 // In this pass we briefly read structures.
-func (t *TIFF) readPassOne(rs models.ReaderSeeker) (err error) {
+func (t *TIFF) readPassOne(rs *reader.Reader) (err error) {
 	var i *ifd.IFD
 
 	// First IFD.
@@ -124,7 +124,7 @@ func (t *TIFF) readPassOne(rs models.ReaderSeeker) (err error) {
 
 // readPassTwo performs a second-pass read of the TIFF object.
 // In this pass we read values and try to decode them.
-func (t *TIFF) readPassTwo(rs models.ReaderSeeker) (err error) {
+func (t *TIFF) readPassTwo(rs *reader.Reader) (err error) {
 	for _, curIFD := range t.ifds {
 		err = curIFD.ProcessValues(rs, t.header.ByteOrder)
 		if err != nil {
@@ -139,7 +139,7 @@ func (t *TIFF) readPassTwo(rs models.ReaderSeeker) (err error) {
 
 // readPassThree performs a third-pass read of the TIFF object.
 // In this pass we read sub-IFDs of tags.
-func (t *TIFF) readPassThree(rs models.ReaderSeeker) (err error) {
+func (t *TIFF) readPassThree(rs *reader.Reader) (err error) {
 	for _, curIFD := range t.ifds {
 		err = curIFD.ProcessSubIFDs(rs, t.header.ByteOrder)
 		if err != nil {

@@ -8,6 +8,7 @@ import (
 	tiff "github.com/vault-thirteen/TIFFer/models/TIFF"
 	tag "github.com/vault-thirteen/TIFFer/models/Tag"
 	bt "github.com/vault-thirteen/TIFFer/models/basic-types"
+	"github.com/vault-thirteen/auxie/reader"
 	"github.com/vault-thirteen/errorz"
 )
 
@@ -43,8 +44,10 @@ func work(filePath string) (err error) {
 		}
 	}()
 
+	rdr := reader.NewReader(f)
+
 	var t *tiff.TIFF
-	t, err = tiff.New(f)
+	t, err = tiff.New(rdr)
 	if err != nil {
 		return err
 	}

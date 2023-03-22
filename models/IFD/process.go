@@ -4,16 +4,17 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/vault-thirteen/TIFFer/helper"
 	"io"
 	"math/big"
 	"unsafe"
 
+	"github.com/vault-thirteen/TIFFer/helper"
 	"github.com/vault-thirteen/TIFFer/models"
 	bo "github.com/vault-thirteen/TIFFer/models/ByteOrder"
 	tag "github.com/vault-thirteen/TIFFer/models/Tag"
 	"github.com/vault-thirteen/TIFFer/models/Type"
 	"github.com/vault-thirteen/TIFFer/models/basic-types"
+	"github.com/vault-thirteen/auxie/reader"
 )
 
 func (de *DirectoryEntry) processDataItemSize() (err error) {
@@ -72,10 +73,7 @@ func (de *DirectoryEntry) processType() (err error) {
 	return fmt.Errorf(ErrTypeIsNotValid, de.Type)
 }
 
-func (de *DirectoryEntry) processValue(
-	rs models.ReaderSeeker,
-	byteOrder bo.ByteOrder,
-) (err error) {
+func (de *DirectoryEntry) processValue(rs *reader.Reader, byteOrder bo.ByteOrder) (err error) {
 	if de.hasFastValue {
 		return de.readFastValue(byteOrder)
 	}
@@ -96,7 +94,7 @@ func (de *DirectoryEntry) readFastValue(byteOrder bo.ByteOrder) (err error) {
 		return fmt.Errorf(bo.ErrUnsupportedBO, byteOrder)
 	}
 
-	de.Value, err = de.readValueFromStream(bytes.NewReader(buf), byteOrder)
+	de.Value, err = de.readValueFromStream(reader.NewReader(bytes.NewReader(buf)), byteOrder)
 	if err != nil {
 		return err
 	}
@@ -104,10 +102,7 @@ func (de *DirectoryEntry) readFastValue(byteOrder bo.ByteOrder) (err error) {
 	return nil
 }
 
-func (de *DirectoryEntry) readExternalValue(
-	rs models.ReaderSeeker,
-	byteOrder bo.ByteOrder,
-) (err error) {
+func (de *DirectoryEntry) readExternalValue(rs *reader.Reader, byteOrder bo.ByteOrder) (err error) {
 	de.Offset = de.ValueOrOffset
 
 	_, err = rs.Seek(int64(de.Offset), io.SeekStart)
@@ -123,45 +118,42 @@ func (de *DirectoryEntry) readExternalValue(
 	return nil
 }
 
-func (de *DirectoryEntry) readValueFromStream(
-	r io.Reader,
-	byteOrder bo.ByteOrder,
-) (data any, err error) {
+func (de *DirectoryEntry) readValueFromStream(rs *reader.Reader, byteOrder bo.ByteOrder) (data any, err error) {
 	switch de.Type {
 	case t.Byte:
-		return de.readArrayOfByte(r)
+		return de.readArrayOfByte(rs)
 	case t.ASCII:
-		return de.readArrayOfASCII(r)
+		return de.readArrayOfASCII(rs)
 	case t.Short:
-		return de.readArrayOfShort(r, byteOrder)
+		return de.readArrayOfShort(rs, byteOrder)
 	case t.Long:
-		return de.readArrayOfLong(r, byteOrder)
+		return de.readArrayOfLong(rs, byteOrder)
 	case t.Rational:
-		return de.readArrayOfRational(r, byteOrder)
+		return de.readArrayOfRational(rs, byteOrder)
 	case t.SByte:
-		return de.readArrayOfSByte(r)
+		return de.readArrayOfSByte(rs)
 	case t.Undefined:
-		return de.readArrayOfUndefined(r)
+		return de.readArrayOfUndefined(rs)
 	case t.SShort:
-		return de.readArrayOfSShort(r, byteOrder)
+		return de.readArrayOfSShort(rs, byteOrder)
 	case t.SLong:
-		return de.readArrayOfSLong(r, byteOrder)
+		return de.readArrayOfSLong(rs, byteOrder)
 	case t.SRational:
-		return de.readArrayOfSRational(r, byteOrder)
+		return de.readArrayOfSRational(rs, byteOrder)
 	case t.Float:
-		return de.readArrayOfFloat(r, byteOrder)
+		return de.readArrayOfFloat(rs, byteOrder)
 	case t.Double:
-		return de.readArrayOfDouble(r, byteOrder)
+		return de.readArrayOfDouble(rs, byteOrder)
 	default:
 		return nil, fmt.Errorf(t.ErrUnknownType, de.Type)
 	}
 }
 
-func (de *DirectoryEntry) readArrayOfByte(r io.Reader) (data []bt.Byte, err error) {
+func (de *DirectoryEntry) readArrayOfByte(rs *reader.Reader) (data []bt.Byte, err error) {
 	data = make([]byte, 0, de.Count)
 	var dataItem byte
 	for i := models.Count(0); i < de.Count; i++ {
-		dataItem, err = helper.ReadByte(r)
+		dataItem, err = rs.ReadByte()
 		if err != nil {
 			return nil, err
 		}
@@ -170,11 +162,11 @@ func (de *DirectoryEntry) readArrayOfByte(r io.Reader) (data []bt.Byte, err erro
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfASCII(r io.Reader) (data []byte, err error) {
-	data = make([]byte, 0, de.Count)
-	var dataItem byte
+func (de *DirectoryEntry) readArrayOfSByte(rs *reader.Reader) (data []bt.SByte, err error) {
+	data = make([]int8, 0, de.Count)
+	var dataItem int8
 	for i := models.Count(0); i < de.Count; i++ {
-		dataItem, err = helper.ReadASCII(r)
+		dataItem, err = rs.ReadSByte()
 		if err != nil {
 			return nil, err
 		}
@@ -183,14 +175,40 @@ func (de *DirectoryEntry) readArrayOfASCII(r io.Reader) (data []byte, err error)
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfShort(r io.Reader, byteOrder bo.ByteOrder) (data []bt.Word, err error) {
+func (de *DirectoryEntry) readArrayOfASCII(rs *reader.Reader) (data []byte, err error) {
+	data = make([]byte, 0, de.Count)
+	var dataItem byte
+	for i := models.Count(0); i < de.Count; i++ {
+		dataItem, err = helper.ReadASCII(rs)
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, dataItem)
+	}
+	return data, nil
+}
+
+func (de *DirectoryEntry) readArrayOfUndefined(rs *reader.Reader) (data []bt.Byte, err error) {
+	data = make([]byte, 0, de.Count)
+	var dataItem byte
+	for i := models.Count(0); i < de.Count; i++ {
+		dataItem, err = helper.ReadUndefined(rs)
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, dataItem)
+	}
+	return data, nil
+}
+
+func (de *DirectoryEntry) readArrayOfShort(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.Word, err error) {
 	data = make([]bt.Word, 0, de.Count)
 	var dataItem bt.Word
 
 	switch byteOrder {
 	case bo.BigEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadShort_BE(r)
+			dataItem, err = rs.ReadUShort_BE()
 			if err != nil {
 				return nil, err
 			}
@@ -198,7 +216,7 @@ func (de *DirectoryEntry) readArrayOfShort(r io.Reader, byteOrder bo.ByteOrder) 
 		}
 	case bo.LittleEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadShort_LE(r)
+			dataItem, err = rs.ReadUShort_LE()
 			if err != nil {
 				return nil, err
 			}
@@ -209,92 +227,14 @@ func (de *DirectoryEntry) readArrayOfShort(r io.Reader, byteOrder bo.ByteOrder) 
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfLong(r io.Reader, byteOrder bo.ByteOrder) (data []bt.DWord, err error) {
-	data = make([]bt.DWord, 0, de.Count)
-	var dataItem bt.DWord
-
-	switch byteOrder {
-	case bo.BigEndian:
-		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadLong_BE(r)
-			if err != nil {
-				return nil, err
-			}
-			data = append(data, dataItem)
-		}
-	case bo.LittleEndian:
-		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadLong_LE(r)
-			if err != nil {
-				return nil, err
-			}
-			data = append(data, dataItem)
-		}
-	}
-
-	return data, nil
-}
-
-func (de *DirectoryEntry) readArrayOfRational(r io.Reader, byteOrder bo.ByteOrder) (data []bt.Rational, err error) {
-	data = make([]*big.Rat, 0, de.Count)
-	var dataItem *big.Rat
-
-	switch byteOrder {
-	case bo.BigEndian:
-		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadRational_BE(r)
-			if err != nil {
-				return nil, err
-			}
-			data = append(data, dataItem)
-		}
-	case bo.LittleEndian:
-		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadRational_LE(r)
-			if err != nil {
-				return nil, err
-			}
-			data = append(data, dataItem)
-		}
-	}
-
-	return data, nil
-}
-
-func (de *DirectoryEntry) readArrayOfSByte(r io.Reader) (data []bt.SByte, err error) {
-	data = make([]int8, 0, de.Count)
-	var dataItem int8
-	for i := models.Count(0); i < de.Count; i++ {
-		dataItem, err = helper.ReadSByte(r)
-		if err != nil {
-			return nil, err
-		}
-		data = append(data, dataItem)
-	}
-	return data, nil
-}
-
-func (de *DirectoryEntry) readArrayOfUndefined(r io.Reader) (data []bt.Byte, err error) {
-	data = make([]byte, 0, de.Count)
-	var dataItem byte
-	for i := models.Count(0); i < de.Count; i++ {
-		dataItem, err = helper.ReadUndefined(r)
-		if err != nil {
-			return nil, err
-		}
-		data = append(data, dataItem)
-	}
-	return data, nil
-}
-
-func (de *DirectoryEntry) readArrayOfSShort(r io.Reader, byteOrder bo.ByteOrder) (data []bt.SShort, err error) {
+func (de *DirectoryEntry) readArrayOfSShort(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.SShort, err error) {
 	data = make([]int16, 0, de.Count)
 	var dataItem int16
 
 	switch byteOrder {
 	case bo.BigEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadSShort_BE(r)
+			dataItem, err = rs.ReadSShort_BE()
 			if err != nil {
 				return nil, err
 			}
@@ -302,7 +242,7 @@ func (de *DirectoryEntry) readArrayOfSShort(r io.Reader, byteOrder bo.ByteOrder)
 		}
 	case bo.LittleEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadSShort_LE(r)
+			dataItem, err = rs.ReadSShort_LE()
 			if err != nil {
 				return nil, err
 			}
@@ -313,14 +253,40 @@ func (de *DirectoryEntry) readArrayOfSShort(r io.Reader, byteOrder bo.ByteOrder)
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfSLong(r io.Reader, byteOrder bo.ByteOrder) (data []bt.SLong, err error) {
+func (de *DirectoryEntry) readArrayOfLong(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.DWord, err error) {
+	data = make([]bt.DWord, 0, de.Count)
+	var dataItem bt.DWord
+
+	switch byteOrder {
+	case bo.BigEndian:
+		for i := models.Count(0); i < de.Count; i++ {
+			dataItem, err = rs.ReadULong_BE()
+			if err != nil {
+				return nil, err
+			}
+			data = append(data, dataItem)
+		}
+	case bo.LittleEndian:
+		for i := models.Count(0); i < de.Count; i++ {
+			dataItem, err = rs.ReadULong_LE()
+			if err != nil {
+				return nil, err
+			}
+			data = append(data, dataItem)
+		}
+	}
+
+	return data, nil
+}
+
+func (de *DirectoryEntry) readArrayOfSLong(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.SLong, err error) {
 	data = make([]int32, 0, de.Count)
 	var dataItem int32
 
 	switch byteOrder {
 	case bo.BigEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadSLong_BE(r)
+			dataItem, err = rs.ReadSLong_BE()
 			if err != nil {
 				return nil, err
 			}
@@ -328,7 +294,7 @@ func (de *DirectoryEntry) readArrayOfSLong(r io.Reader, byteOrder bo.ByteOrder) 
 		}
 	case bo.LittleEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadSLong_LE(r)
+			dataItem, err = rs.ReadSLong_LE()
 			if err != nil {
 				return nil, err
 			}
@@ -339,14 +305,14 @@ func (de *DirectoryEntry) readArrayOfSLong(r io.Reader, byteOrder bo.ByteOrder) 
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfSRational(r io.Reader, byteOrder bo.ByteOrder) (data []bt.SRational, err error) {
+func (de *DirectoryEntry) readArrayOfRational(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.Rational, err error) {
 	data = make([]*big.Rat, 0, de.Count)
 	var dataItem *big.Rat
 
 	switch byteOrder {
 	case bo.BigEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadSRational_BE(r)
+			dataItem, err = helper.ReadRational_BE(rs)
 			if err != nil {
 				return nil, err
 			}
@@ -354,7 +320,7 @@ func (de *DirectoryEntry) readArrayOfSRational(r io.Reader, byteOrder bo.ByteOrd
 		}
 	case bo.LittleEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadSRational_LE(r)
+			dataItem, err = helper.ReadRational_LE(rs)
 			if err != nil {
 				return nil, err
 			}
@@ -365,14 +331,40 @@ func (de *DirectoryEntry) readArrayOfSRational(r io.Reader, byteOrder bo.ByteOrd
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfFloat(r io.Reader, byteOrder bo.ByteOrder) (data []bt.Float, err error) {
+func (de *DirectoryEntry) readArrayOfSRational(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.SRational, err error) {
+	data = make([]*big.Rat, 0, de.Count)
+	var dataItem *big.Rat
+
+	switch byteOrder {
+	case bo.BigEndian:
+		for i := models.Count(0); i < de.Count; i++ {
+			dataItem, err = helper.ReadSRational_BE(rs)
+			if err != nil {
+				return nil, err
+			}
+			data = append(data, dataItem)
+		}
+	case bo.LittleEndian:
+		for i := models.Count(0); i < de.Count; i++ {
+			dataItem, err = helper.ReadSRational_LE(rs)
+			if err != nil {
+				return nil, err
+			}
+			data = append(data, dataItem)
+		}
+	}
+
+	return data, nil
+}
+
+func (de *DirectoryEntry) readArrayOfFloat(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.Float, err error) {
 	data = make([]float32, 0, de.Count)
 	var dataItem float32
 
 	switch byteOrder {
 	case bo.BigEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadFloat_BE(r)
+			dataItem, err = rs.ReadFloat_BE()
 			if err != nil {
 				return nil, err
 			}
@@ -380,7 +372,7 @@ func (de *DirectoryEntry) readArrayOfFloat(r io.Reader, byteOrder bo.ByteOrder) 
 		}
 	case bo.LittleEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadFloat_LE(r)
+			dataItem, err = rs.ReadFloat_LE()
 			if err != nil {
 				return nil, err
 			}
@@ -391,14 +383,14 @@ func (de *DirectoryEntry) readArrayOfFloat(r io.Reader, byteOrder bo.ByteOrder) 
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfDouble(r io.Reader, byteOrder bo.ByteOrder) (data []bt.Double, err error) {
+func (de *DirectoryEntry) readArrayOfDouble(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.Double, err error) {
 	data = make([]float64, 0, de.Count)
 	var dataItem float64
 
 	switch byteOrder {
 	case bo.BigEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadDouble_BE(r)
+			dataItem, err = rs.ReadDouble_BE()
 			if err != nil {
 				return nil, err
 			}
@@ -406,7 +398,7 @@ func (de *DirectoryEntry) readArrayOfDouble(r io.Reader, byteOrder bo.ByteOrder)
 		}
 	case bo.LittleEndian:
 		for i := models.Count(0); i < de.Count; i++ {
-			dataItem, err = helper.ReadDouble_LE(r)
+			dataItem, err = rs.ReadDouble_LE()
 			if err != nil {
 				return nil, err
 			}

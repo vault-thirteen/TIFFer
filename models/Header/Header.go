@@ -2,14 +2,13 @@ package hdr
 
 import (
 	"fmt"
-	"io"
 
-	"github.com/vault-thirteen/TIFFer/helper"
 	"github.com/vault-thirteen/TIFFer/models"
 	"github.com/vault-thirteen/TIFFer/models/ByteOrder"
 	ifd "github.com/vault-thirteen/TIFFer/models/IFD"
 	"github.com/vault-thirteen/TIFFer/models/MagicNumber"
 	"github.com/vault-thirteen/TIFFer/models/basic-types"
+	"github.com/vault-thirteen/auxie/reader"
 )
 
 // Header is the Image File Header described in the TIFF 6.0 Specification.
@@ -28,23 +27,23 @@ type Header struct {
 }
 
 // New constructs the Header from the reader.
-func New(r io.Reader) (h *Header, err error) {
+func New(rs *reader.Reader) (h *Header, err error) {
 	h = &Header{}
 
 	// Byte order.
-	h.ByteOrder, err = bo.New(r)
+	h.ByteOrder, err = bo.New(rs)
 	if err != nil {
 		return nil, err
 	}
 
 	// Magic number.
-	h.MagicNumber, err = mn.New(r, h.ByteOrder)
+	h.MagicNumber, err = mn.New(rs, h.ByteOrder)
 	if err != nil {
 		return nil, err
 	}
 
 	// OffsetOfValue of the first IFD.
-	h.OffsetOfFirstIFD, err = h.readIFDOffset(r, h.ByteOrder)
+	h.OffsetOfFirstIFD, err = h.readIFDOffset(rs, h.ByteOrder)
 	if err != nil {
 		return nil, err
 	}
@@ -53,12 +52,12 @@ func New(r io.Reader) (h *Header, err error) {
 }
 
 // readIFDOffset reads the IFD offset and returns it.
-func (h *Header) readIFDOffset(r io.Reader, byteOrder bo.ByteOrder) (ifdOffset bt.DWord, err error) {
+func (h *Header) readIFDOffset(rs *reader.Reader, byteOrder bo.ByteOrder) (ifdOffset bt.DWord, err error) {
 	switch byteOrder {
 	case bo.BigEndian:
-		return helper.ReadDWord_BE(r)
+		return rs.ReadDWord_BE()
 	case bo.LittleEndian:
-		return helper.ReadDWord_LE(r)
+		return rs.ReadDWord_LE()
 	default:
 		return 0, fmt.Errorf(bo.ErrUnsupportedBO, byteOrder)
 	}

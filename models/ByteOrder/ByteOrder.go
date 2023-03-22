@@ -2,9 +2,8 @@ package bo
 
 import (
 	"fmt"
-	"io"
 
-	"github.com/vault-thirteen/TIFFer/helper"
+	"github.com/vault-thirteen/auxie/reader"
 )
 
 const (
@@ -30,9 +29,9 @@ const (
 type ByteOrder byte
 
 // New reads the byte order from the stream and returns it.
-func New(r io.Reader) (bo ByteOrder, err error) {
+func New(rs *reader.Reader) (bo ByteOrder, err error) {
 	var ba []byte
-	ba, err = helper.ReadBytes(r, ByteOrderMarkSize)
+	ba, err = rs.ReadBytes(ByteOrderMarkSize)
 	if err != nil {
 		return Unknown, err
 	}
