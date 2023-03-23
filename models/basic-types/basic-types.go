@@ -47,13 +47,15 @@ type SRational = bt.Rational
 
 // Notes on the rational types.
 //
-// Golang provides very limited support for rational numbers:
+// Golang's representation of rational numbers differs from rational numbers
+// stated in the TIFF 6.0 Specification.
 //
-//	1.	Rational numbers are always signed, i.e. only signed integer numerators
-//		and denominators are supported.
-//
-//	2.	Numerators and denominators use 64-bit integer numbers, i.e. 32-bit
-//		versions of rational numbers are not supported.
+// A brief study shows that Go's rationals are always signed. However, the
+// internal types used in the Go's "big.Rat" type, such as "nat" type, use an
+// array of so-called "Word", where their "Word" is a "uint" instead of a
+// common sense unsigned 32-bit integer. So, the question is difficult. A
+// further study is needed to know about the level of compatibility between the
+// rational types.
 
 // Float or floating point types.
 type Float = bt.Float

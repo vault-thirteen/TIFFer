@@ -86,6 +86,5 @@ Wikipedia: https://en.wikipedia.org/wiki/TIFF
 ## Notes
 
 There are some mismatches between Golang's data types and TIFF format data 
-types. First of all, it concerns the Rational data types. Go programming 
-language has very poor support for built-in rational number types. More 
-information can be found in the comments of the `basic-types.go` file.
+types. First of all, it concerns the Rational data types. More information can 
+be found in the comments of the `basic-types.go` file.
