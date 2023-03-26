@@ -11,7 +11,7 @@ import (
 	t "github.com/vault-thirteen/TIFFer/models/Type"
 	bt "github.com/vault-thirteen/TIFFer/models/basic-types"
 	"github.com/vault-thirteen/auxie/NTS"
-	"github.com/vault-thirteen/auxie/reader"
+	"github.com/vault-thirteen/auxie/rs"
 )
 
 // FastValueLimitSize is the maximum amount of data which can be stored in the
@@ -87,7 +87,7 @@ type DirectoryEntry struct {
 // NewDE constructs a first-pass model of a Directory Entry from the stream.
 // First-pass model means that we collect tags, data item models, data item
 // counts, data item value offsets, but we do not read actual values.
-func NewDE(rs *reader.Reader, byteOrder bo.ByteOrder) (de *DirectoryEntry, err error) {
+func NewDE(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (de *DirectoryEntry, err error) {
 	switch byteOrder {
 	case bo.BigEndian:
 		return newDE_BE(rs)
@@ -100,7 +100,7 @@ func NewDE(rs *reader.Reader, byteOrder bo.ByteOrder) (de *DirectoryEntry, err e
 
 // newDE_BE is a Directory Entry first-pass constructor using big endian byte
 // order.
-func newDE_BE(rs *reader.Reader) (e *DirectoryEntry, err error) {
+func newDE_BE(rs *rs.ReaderSeeker) (e *DirectoryEntry, err error) {
 	e = &DirectoryEntry{}
 
 	// Tag.
@@ -132,7 +132,7 @@ func newDE_BE(rs *reader.Reader) (e *DirectoryEntry, err error) {
 
 // newDE_LE is a Directory Entry first-pass constructor using little endian byte
 // order.
-func newDE_LE(rs *reader.Reader) (e *DirectoryEntry, err error) {
+func newDE_LE(rs *rs.ReaderSeeker) (e *DirectoryEntry, err error) {
 	e = &DirectoryEntry{}
 
 	// Tag.
@@ -164,7 +164,7 @@ func newDE_LE(rs *reader.Reader) (e *DirectoryEntry, err error) {
 
 // ProcessValues processes the directory entry data.
 // Here we read values and try to decode (parse) them.
-func (de *DirectoryEntry) ProcessValues(rs *reader.Reader, byteOrder bo.ByteOrder) (err error) {
+func (de *DirectoryEntry) ProcessValues(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (err error) {
 	err = de.processDataItemSize()
 	if err != nil {
 		return err
@@ -343,7 +343,7 @@ func (de *DirectoryEntry) HasSubIFD() bool {
 
 // ProcessSubIFDs processes the directory entry sub-IFDs.
 // Here we read sub-IFDs of all tags who have them.
-func (de *DirectoryEntry) ProcessSubIFDs(rs *reader.Reader, byteOrder bo.ByteOrder) (err error) {
+func (de *DirectoryEntry) ProcessSubIFDs(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (err error) {
 	de.processHasSubIFD()
 
 	if !de.hasSubIFD {
@@ -379,7 +379,7 @@ func (de *DirectoryEntry) ProcessSubIFDs(rs *reader.Reader, byteOrder bo.ByteOrd
 
 // readSubIFDPassOne performs a first read pass of the SubIFD.
 // In this pass we briefly read structures.
-func (de *DirectoryEntry) readSubIFDPassOne(rs *reader.Reader, byteOrder bo.ByteOrder) (err error) {
+func (de *DirectoryEntry) readSubIFDPassOne(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (err error) {
 	var si *SubIFD
 
 	// First SubIFD.
@@ -424,7 +424,7 @@ func (de *DirectoryEntry) readSubIFDPassOne(rs *reader.Reader, byteOrder bo.Byte
 
 // readSubIFDPassTwo performs a second-pass read of the SubIFD.
 // In this pass we read values and try to decode them.
-func (de *DirectoryEntry) readSubIFDPassTwo(rs *reader.Reader, byteOrder bo.ByteOrder) (err error) {
+func (de *DirectoryEntry) readSubIFDPassTwo(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (err error) {
 	for _, curIFD := range de.SubIFDs {
 		err = curIFD.ProcessValues(rs, byteOrder)
 		if err != nil {

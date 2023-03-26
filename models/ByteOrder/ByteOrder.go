@@ -3,7 +3,7 @@ package bo
 import (
 	"fmt"
 
-	"github.com/vault-thirteen/auxie/reader"
+	"github.com/vault-thirteen/auxie/rs"
 )
 
 const (
@@ -29,7 +29,7 @@ const (
 type ByteOrder byte
 
 // New reads the byte order from the stream and returns it.
-func New(rs *reader.Reader) (bo ByteOrder, err error) {
+func New(rs *rs.ReaderSeeker) (bo ByteOrder, err error) {
 	var ba []byte
 	ba, err = rs.ReadBytes(ByteOrderMarkSize)
 	if err != nil {

@@ -4,34 +4,34 @@ import (
 	"math/big"
 
 	bt "github.com/vault-thirteen/TIFFer/models/basic-types"
-	"github.com/vault-thirteen/auxie/reader"
+	"github.com/vault-thirteen/auxie/rs"
 )
 
 // ReadASCII reads an ASCII byte.
-func ReadASCII(rs *reader.Reader) (b byte, err error) {
+func ReadASCII(rs *rs.ReaderSeeker) (b byte, err error) {
 	return rs.ReadByte()
 }
 
 // ReadUndefined reads Undefined type item.
-func ReadUndefined(rs *reader.Reader) (b byte, err error) {
+func ReadUndefined(rs *rs.ReaderSeeker) (b byte, err error) {
 	return rs.ReadByte()
 }
 
 // ReadRational_BE reads a Rational using the big endian technique.
 // This method is not fully compatible with TIFF 6.0 Specification.
-func ReadRational_BE(rs *reader.Reader) (rat *big.Rat, err error) {
+func ReadRational_BE(rs *rs.ReaderSeeker) (rat *big.Rat, err error) {
 	return ReadSRational_BE(rs)
 }
 
 // ReadRational_LE reads a Rational using the little endian technique.
 // This method is not fully compatible with TIFF 6.0 Specification.
-func ReadRational_LE(rs *reader.Reader) (rat *big.Rat, err error) {
+func ReadRational_LE(rs *rs.ReaderSeeker) (rat *big.Rat, err error) {
 	return ReadSRational_LE(rs)
 }
 
 // ReadSRational_BE reads an SRational using the big endian technique.
 // This method is not fully compatible with TIFF 6.0 Specification.
-func ReadSRational_BE(rs *reader.Reader) (rat *big.Rat, err error) {
+func ReadSRational_BE(rs *rs.ReaderSeeker) (rat *big.Rat, err error) {
 	var numerator bt.DWord
 	numerator, err = rs.ReadDWord_BE()
 	if err != nil {
@@ -49,7 +49,7 @@ func ReadSRational_BE(rs *reader.Reader) (rat *big.Rat, err error) {
 
 // ReadSRational_LE reads an SRational using the little endian technique.
 // This method is not fully compatible with TIFF 6.0 Specification.
-func ReadSRational_LE(rs *reader.Reader) (rat *big.Rat, err error) {
+func ReadSRational_LE(rs *rs.ReaderSeeker) (rat *big.Rat, err error) {
 	var numerator bt.DWord
 	numerator, err = rs.ReadDWord_LE()
 	if err != nil {

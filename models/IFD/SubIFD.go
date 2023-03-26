@@ -8,7 +8,7 @@ import (
 	"github.com/vault-thirteen/TIFFer/models/ByteOrder"
 	"github.com/vault-thirteen/TIFFer/models/Tag"
 	"github.com/vault-thirteen/TIFFer/models/basic-types"
-	"github.com/vault-thirteen/auxie/reader"
+	"github.com/vault-thirteen/auxie/rs"
 )
 
 const (
@@ -49,7 +49,7 @@ type SubIFD struct {
 // NewSubIFD constructs a first-pass model of a SubIFD from the stream.
 // First-pass model means that we collect tags, data item models, data item
 // counts, data item value offsets, but we do not read actual values.
-func NewSubIFD(rs *reader.Reader, byteOrder bo.ByteOrder, ifdOffset models.OffsetOfIFD) (si *SubIFD, err error) {
+func NewSubIFD(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder, ifdOffset models.OffsetOfIFD) (si *SubIFD, err error) {
 	_, err = rs.Seek(int64(ifdOffset), io.SeekStart)
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func NewSubIFD(rs *reader.Reader, byteOrder bo.ByteOrder, ifdOffset models.Offse
 }
 
 // newSubIFD_BE is a SubIFD first-pass constructor using big endian byte order.
-func newSubIFD_BE(rs *reader.Reader) (si *SubIFD, err error) {
+func newSubIFD_BE(rs *rs.ReaderSeeker) (si *SubIFD, err error) {
 	si = &SubIFD{
 		Statistics: new(Statistics),
 	}
@@ -99,7 +99,7 @@ func newSubIFD_BE(rs *reader.Reader) (si *SubIFD, err error) {
 }
 
 // newSubIFD_LE is a SubIFD first-pass constructor using little endian byte order.
-func newSubIFD_LE(rs *reader.Reader) (si *SubIFD, err error) {
+func newSubIFD_LE(rs *rs.ReaderSeeker) (si *SubIFD, err error) {
 	si = &SubIFD{
 		Statistics: new(Statistics),
 	}
@@ -138,7 +138,7 @@ func (si *SubIFD) IsLast() bool {
 
 // ProcessValues processes values of the SubIFD.
 // Here we read values and try to decode (parse) them.
-func (si *SubIFD) ProcessValues(rs *reader.Reader, byteOrder bo.ByteOrder) (err error) {
+func (si *SubIFD) ProcessValues(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (err error) {
 	for _, curDE := range si.DirectoryEntries {
 		err = curDE.ProcessValues(rs, byteOrder)
 		if err != nil {

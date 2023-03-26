@@ -6,7 +6,7 @@ import (
 
 	"github.com/vault-thirteen/TIFFer/models/ByteOrder"
 	"github.com/vault-thirteen/TIFFer/models/basic-types"
-	"github.com/vault-thirteen/auxie/reader"
+	"github.com/vault-thirteen/auxie/rs"
 )
 
 const (
@@ -24,7 +24,7 @@ const (
 type MagicNumber bt.Word
 
 // New reads the magic number from the stream and returns it.
-func New(rs *reader.Reader, byteOrder bo.ByteOrder) (mn MagicNumber, err error) {
+func New(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (mn MagicNumber, err error) {
 	var ba []byte
 	ba, err = rs.ReadBytes(MagicNumberSize)
 	if err != nil {

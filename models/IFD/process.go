@@ -14,7 +14,7 @@ import (
 	tag "github.com/vault-thirteen/TIFFer/models/Tag"
 	"github.com/vault-thirteen/TIFFer/models/Type"
 	"github.com/vault-thirteen/TIFFer/models/basic-types"
-	"github.com/vault-thirteen/auxie/reader"
+	"github.com/vault-thirteen/auxie/rs"
 )
 
 func (de *DirectoryEntry) processDataItemSize() (err error) {
@@ -73,7 +73,7 @@ func (de *DirectoryEntry) processType() (err error) {
 	return fmt.Errorf(ErrTypeIsNotValid, de.Type)
 }
 
-func (de *DirectoryEntry) processValue(rs *reader.Reader, byteOrder bo.ByteOrder) (err error) {
+func (de *DirectoryEntry) processValue(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (err error) {
 	if de.hasFastValue {
 		return de.readFastValue(byteOrder)
 	}
@@ -94,7 +94,13 @@ func (de *DirectoryEntry) readFastValue(byteOrder bo.ByteOrder) (err error) {
 		return fmt.Errorf(bo.ErrUnsupportedBO, byteOrder)
 	}
 
-	de.Value, err = de.readValueFromStream(reader.NewReader(bytes.NewReader(buf)), byteOrder)
+	var readerSeeker *rs.ReaderSeeker
+	readerSeeker, err = rs.New(bytes.NewReader(buf))
+	if err != nil {
+		return err
+	}
+
+	de.Value, err = de.readValueFromStream(readerSeeker, byteOrder)
 	if err != nil {
 		return err
 	}
@@ -102,7 +108,7 @@ func (de *DirectoryEntry) readFastValue(byteOrder bo.ByteOrder) (err error) {
 	return nil
 }
 
-func (de *DirectoryEntry) readExternalValue(rs *reader.Reader, byteOrder bo.ByteOrder) (err error) {
+func (de *DirectoryEntry) readExternalValue(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (err error) {
 	de.Offset = de.ValueOrOffset
 
 	_, err = rs.Seek(int64(de.Offset), io.SeekStart)
@@ -118,7 +124,7 @@ func (de *DirectoryEntry) readExternalValue(rs *reader.Reader, byteOrder bo.Byte
 	return nil
 }
 
-func (de *DirectoryEntry) readValueFromStream(rs *reader.Reader, byteOrder bo.ByteOrder) (data any, err error) {
+func (de *DirectoryEntry) readValueFromStream(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (data any, err error) {
 	switch de.Type {
 	case t.Byte:
 		return de.readArrayOfByte(rs)
@@ -149,7 +155,7 @@ func (de *DirectoryEntry) readValueFromStream(rs *reader.Reader, byteOrder bo.By
 	}
 }
 
-func (de *DirectoryEntry) readArrayOfByte(rs *reader.Reader) (data []bt.Byte, err error) {
+func (de *DirectoryEntry) readArrayOfByte(rs *rs.ReaderSeeker) (data []bt.Byte, err error) {
 	data = make([]byte, 0, de.Count)
 	var dataItem byte
 	for i := models.Count(0); i < de.Count; i++ {
@@ -162,7 +168,7 @@ func (de *DirectoryEntry) readArrayOfByte(rs *reader.Reader) (data []bt.Byte, er
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfSByte(rs *reader.Reader) (data []bt.SByte, err error) {
+func (de *DirectoryEntry) readArrayOfSByte(rs *rs.ReaderSeeker) (data []bt.SByte, err error) {
 	data = make([]int8, 0, de.Count)
 	var dataItem int8
 	for i := models.Count(0); i < de.Count; i++ {
@@ -175,7 +181,7 @@ func (de *DirectoryEntry) readArrayOfSByte(rs *reader.Reader) (data []bt.SByte, 
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfASCII(rs *reader.Reader) (data []byte, err error) {
+func (de *DirectoryEntry) readArrayOfASCII(rs *rs.ReaderSeeker) (data []byte, err error) {
 	data = make([]byte, 0, de.Count)
 	var dataItem byte
 	for i := models.Count(0); i < de.Count; i++ {
@@ -188,7 +194,7 @@ func (de *DirectoryEntry) readArrayOfASCII(rs *reader.Reader) (data []byte, err 
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfUndefined(rs *reader.Reader) (data []bt.Byte, err error) {
+func (de *DirectoryEntry) readArrayOfUndefined(rs *rs.ReaderSeeker) (data []bt.Byte, err error) {
 	data = make([]byte, 0, de.Count)
 	var dataItem byte
 	for i := models.Count(0); i < de.Count; i++ {
@@ -201,7 +207,7 @@ func (de *DirectoryEntry) readArrayOfUndefined(rs *reader.Reader) (data []bt.Byt
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfShort(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.Word, err error) {
+func (de *DirectoryEntry) readArrayOfShort(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (data []bt.Word, err error) {
 	data = make([]bt.Word, 0, de.Count)
 	var dataItem bt.Word
 
@@ -227,7 +233,7 @@ func (de *DirectoryEntry) readArrayOfShort(rs *reader.Reader, byteOrder bo.ByteO
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfSShort(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.SShort, err error) {
+func (de *DirectoryEntry) readArrayOfSShort(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (data []bt.SShort, err error) {
 	data = make([]int16, 0, de.Count)
 	var dataItem int16
 
@@ -253,7 +259,7 @@ func (de *DirectoryEntry) readArrayOfSShort(rs *reader.Reader, byteOrder bo.Byte
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfLong(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.DWord, err error) {
+func (de *DirectoryEntry) readArrayOfLong(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (data []bt.DWord, err error) {
 	data = make([]bt.DWord, 0, de.Count)
 	var dataItem bt.DWord
 
@@ -279,7 +285,7 @@ func (de *DirectoryEntry) readArrayOfLong(rs *reader.Reader, byteOrder bo.ByteOr
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfSLong(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.SLong, err error) {
+func (de *DirectoryEntry) readArrayOfSLong(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (data []bt.SLong, err error) {
 	data = make([]int32, 0, de.Count)
 	var dataItem int32
 
@@ -305,7 +311,7 @@ func (de *DirectoryEntry) readArrayOfSLong(rs *reader.Reader, byteOrder bo.ByteO
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfRational(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.Rational, err error) {
+func (de *DirectoryEntry) readArrayOfRational(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (data []bt.Rational, err error) {
 	data = make([]*big.Rat, 0, de.Count)
 	var dataItem *big.Rat
 
@@ -331,7 +337,7 @@ func (de *DirectoryEntry) readArrayOfRational(rs *reader.Reader, byteOrder bo.By
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfSRational(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.SRational, err error) {
+func (de *DirectoryEntry) readArrayOfSRational(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (data []bt.SRational, err error) {
 	data = make([]*big.Rat, 0, de.Count)
 	var dataItem *big.Rat
 
@@ -357,7 +363,7 @@ func (de *DirectoryEntry) readArrayOfSRational(rs *reader.Reader, byteOrder bo.B
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfFloat(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.Float, err error) {
+func (de *DirectoryEntry) readArrayOfFloat(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (data []bt.Float, err error) {
 	data = make([]float32, 0, de.Count)
 	var dataItem float32
 
@@ -383,7 +389,7 @@ func (de *DirectoryEntry) readArrayOfFloat(rs *reader.Reader, byteOrder bo.ByteO
 	return data, nil
 }
 
-func (de *DirectoryEntry) readArrayOfDouble(rs *reader.Reader, byteOrder bo.ByteOrder) (data []bt.Double, err error) {
+func (de *DirectoryEntry) readArrayOfDouble(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (data []bt.Double, err error) {
 	data = make([]float64, 0, de.Count)
 	var dataItem float64
 

@@ -5,7 +5,8 @@ import (
 
 	hdr "github.com/vault-thirteen/TIFFer/models/Header"
 	ifd "github.com/vault-thirteen/TIFFer/models/IFD"
-	"github.com/vault-thirteen/auxie/reader"
+	iors "github.com/vault-thirteen/auxie/ReaderSeeker"
+	"github.com/vault-thirteen/auxie/rs"
 )
 
 const (
@@ -43,7 +44,7 @@ type TIFF struct {
 // for those tags which we are interested in. On the third pass we collect
 // information about so-called Sub-IFDs, which are not a part of the
 // TIFF 6.0 Specification, but they are used by some tools.
-func New(rs *reader.Reader) (t *TIFF, err error) {
+func New(stream iors.ReaderSeeker) (t *TIFF, err error) {
 	t = &TIFF{
 		ifds: make([]*ifd.IFD, 0),
 	}
@@ -53,26 +54,32 @@ func New(rs *reader.Reader) (t *TIFF, err error) {
 		return nil, err
 	}
 
+	var readerSeeker *rs.ReaderSeeker
+	readerSeeker, err = rs.New(stream)
+	if err != nil {
+		return nil, err
+	}
+
 	// Header.
-	t.header, err = hdr.New(rs)
+	t.header, err = hdr.New(readerSeeker)
 	if err != nil {
 		return nil, err
 	}
 
 	// Pass I.
-	err = t.readPassOne(rs)
+	err = t.readPassOne(readerSeeker)
 	if err != nil {
 		return nil, err
 	}
 
 	// Pass II.
-	err = t.readPassTwo(rs)
+	err = t.readPassTwo(readerSeeker)
 	if err != nil {
 		return nil, err
 	}
 
 	// Pass III.
-	err = t.readPassThree(rs)
+	err = t.readPassThree(readerSeeker)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +89,7 @@ func New(rs *reader.Reader) (t *TIFF, err error) {
 
 // readPassOne performs a first read pass of the TIFF object.
 // In this pass we briefly read structures.
-func (t *TIFF) readPassOne(rs *reader.Reader) (err error) {
+func (t *TIFF) readPassOne(rs *rs.ReaderSeeker) (err error) {
 	var i *ifd.IFD
 
 	// First IFD.
@@ -124,7 +131,7 @@ func (t *TIFF) readPassOne(rs *reader.Reader) (err error) {
 
 // readPassTwo performs a second-pass read of the TIFF object.
 // In this pass we read values and try to decode them.
-func (t *TIFF) readPassTwo(rs *reader.Reader) (err error) {
+func (t *TIFF) readPassTwo(rs *rs.ReaderSeeker) (err error) {
 	for _, curIFD := range t.ifds {
 		err = curIFD.ProcessValues(rs, t.header.ByteOrder)
 		if err != nil {
@@ -139,7 +146,7 @@ func (t *TIFF) readPassTwo(rs *reader.Reader) (err error) {
 
 // readPassThree performs a third-pass read of the TIFF object.
 // In this pass we read sub-IFDs of tags.
-func (t *TIFF) readPassThree(rs *reader.Reader) (err error) {
+func (t *TIFF) readPassThree(rs *rs.ReaderSeeker) (err error) {
 	for _, curIFD := range t.ifds {
 		err = curIFD.ProcessSubIFDs(rs, t.header.ByteOrder)
 		if err != nil {

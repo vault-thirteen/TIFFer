@@ -8,7 +8,7 @@ import (
 	ifd "github.com/vault-thirteen/TIFFer/models/IFD"
 	"github.com/vault-thirteen/TIFFer/models/MagicNumber"
 	"github.com/vault-thirteen/TIFFer/models/basic-types"
-	"github.com/vault-thirteen/auxie/reader"
+	"github.com/vault-thirteen/auxie/rs"
 )
 
 // Header is the Image File Header described in the TIFF 6.0 Specification.
@@ -27,7 +27,7 @@ type Header struct {
 }
 
 // New constructs the Header from the reader.
-func New(rs *reader.Reader) (h *Header, err error) {
+func New(rs *rs.ReaderSeeker) (h *Header, err error) {
 	h = &Header{}
 
 	// Byte order.
@@ -52,7 +52,7 @@ func New(rs *reader.Reader) (h *Header, err error) {
 }
 
 // readIFDOffset reads the IFD offset and returns it.
-func (h *Header) readIFDOffset(rs *reader.Reader, byteOrder bo.ByteOrder) (ifdOffset bt.DWord, err error) {
+func (h *Header) readIFDOffset(rs *rs.ReaderSeeker, byteOrder bo.ByteOrder) (ifdOffset bt.DWord, err error) {
 	switch byteOrder {
 	case bo.BigEndian:
 		return rs.ReadDWord_BE()
