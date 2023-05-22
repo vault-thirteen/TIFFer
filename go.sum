@@ -1,8 +1,8 @@
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/rogpeppe/go-internal v1.9.0 h1:73kH8U+JUqXU8lRuOHeVHaa/SZPifC7BkcraZVejAe8=
-github.com/vault-thirteen/auxie v0.12.4 h1:xYd83Fm0IveE/OqueaehjpCmXKM8QOdcsk1myNOSVMI=
-github.com/vault-thirteen/auxie v0.12.4/go.mod h1:oIb5RhpAPAHqYTCIrym97bR3KULuo5OlS3xEyu80KZU=
+github.com/vault-thirteen/auxie v0.12.5 h1:zCr7IoYyqULzjJXFfzC8FC4rCPR3JyANvwAE+MASQhM=
+github.com/vault-thirteen/auxie v0.12.5/go.mod h1:cXiLlO2Hp1Du7fweVqE+LnBf+Xg8lPoz9iee3EobIW8=
 github.com/vault-thirteen/errorz v1.1.0 h1:ul4UsZfQWy5p6DZ4bAclQ14I/bm9YnGfAg3q++v5zxg=
 github.com/vault-thirteen/errorz v1.1.0/go.mod h1:EEqZH4OZWTXG14ZZSPFI7nzDqVMwWljDybNB9oY1zec=
 github.com/vault-thirteen/tester v1.1.0 h1:Fi2SHMjrNuAbUzbvnuKkh1uoaIxMvVNCU6WB3rpviHk=
