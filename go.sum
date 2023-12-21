@@ -1,5 +1,5 @@
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/rogpeppe/go-internal v1.9.0 h1:73kH8U+JUqXU8lRuOHeVHaa/SZPifC7BkcraZVejAe8=
-github.com/vault-thirteen/auxie v0.19.0 h1:7EAYxMh8EiKqlWsamJfTL26tmGYhcc6+iK16eobqqV4=
-github.com/vault-thirteen/auxie v0.19.0/go.mod h1:d6E3IMW4HXntAwV6YRDwY/aioBxrfYmvfCXMDdBlzUs=
+github.com/vault-thirteen/auxie v0.21.0 h1:Hced6J8j1xozr8BNq288byx98tF38HJOb66H0gNg4OI=
+github.com/vault-thirteen/auxie v0.21.0/go.mod h1:jlNi5ZRto40p8jMAIjt7oJD5iKmmnQE6v9uHlqT01ag=
