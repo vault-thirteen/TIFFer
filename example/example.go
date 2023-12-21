@@ -8,7 +8,7 @@ import (
 	tiff "github.com/vault-thirteen/TIFFer/models/TIFF"
 	tag "github.com/vault-thirteen/TIFFer/models/Tag"
 	bt "github.com/vault-thirteen/TIFFer/models/basic-types"
-	"github.com/vault-thirteen/errorz"
+	ae "github.com/vault-thirteen/auxie/errors"
 )
 
 const UsageHint = `Usage:
@@ -39,7 +39,7 @@ func work(filePath string) (err error) {
 	defer func() {
 		derr := f.Close()
 		if derr != nil {
-			err = errorz.Combine(err, derr)
+			err = ae.Combine(err, derr)
 		}
 	}()
 

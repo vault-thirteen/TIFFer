@@ -1,11 +1,11 @@
 # TIFFer
 
-A library for parsing TIFF format.  
-The main purpose of this library is reading meta-data from TIFF files.  
+A library for parsing _TIFF_ format.  
+The main purpose of this library is reading meta-data from _TIFF_ files.  
 
 ## Description
 
-This library supports reading and parsing TIFF tags and their values.  
+This library supports reading and parsing _TIFF_ tags and their values.  
 
 Decoding of image formats is not supported by this library.  
 Writing and encoding data is also not a part of this library.  
@@ -46,7 +46,7 @@ This library supports tags of following categories:
 ### II. Sub-IFD Feature.
 
 The library is able to read tags stored in so called Sub-IFDs which is really 
-a bit of a "hack" of the TIFF encoding scheme. TIFF format was designed to 
+a bit of a "hack" of the _TIFF_ encoding scheme. _TIFF_ format was designed to 
 support only the flat layout of IFDs. Sub-IFDs in this library can be accessed 
 via the `SubIFD` field of the Directory Entry (Tag). A couple of usage examples 
 of the library can be viewed in the `example` folder.
@@ -78,13 +78,13 @@ https://developer.adobe.com/content/dam/udp/en/open/standards/tiff/TIFF6.pdf
 
 ## History
 
-TIFF format was developed by Aldus Corporation. At this moment, in the year 
-2023, the owner of this technology is Adobe Inc., who bought Aldus Corporation 
-in September 1994. More information about TIFF format can be found in 
-Wikipedia: https://en.wikipedia.org/wiki/TIFF
+_TIFF_ format was developed by _Aldus Corporation_. At this moment, in the year 
+2023, the owner of this technology is _Adobe Inc._, who bought _Aldus 
+Corporation_ in September 1994. More information about _TIFF_ format can be 
+found in Wikipedia: https://en.wikipedia.org/wiki/TIFF
 
 ## Notes
 
-There are some mismatches between Golang's data types and TIFF format data 
-types. First of all, it concerns the Rational data types. More information can 
+There are some mismatches between _Golang_'s data types and _TIFF_ format data 
+types. First of all, it concerns the _Rational_ data types. More information can 
 be found in the comments of the `basic-types.go` file.
