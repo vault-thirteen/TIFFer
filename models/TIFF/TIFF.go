@@ -105,7 +105,7 @@ func (t *TIFF) readPassOne(rs *rs.ReaderSeeker) (err error) {
 
 	// Rest IFDs.
 	n := 2
-	if !lrIFD.IsLast() {
+	for !lrIFD.IsLast() {
 		i, err = ifd.NewIFD(rs, t.header.ByteOrder, lrIFD.OffsetOfNextIFD)
 		if err != nil {
 			return fmt.Errorf(ErrInNthIFD, n, err.Error())
