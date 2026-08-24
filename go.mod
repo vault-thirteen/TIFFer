@@ -1,5 +1,5 @@
 module github.com/vault-thirteen/TIFFer
 
-go 1.25.12
+go 1.26.7
 
-require github.com/vault-thirteen/auxie v0.36.6
+require github.com/vault-thirteen/auxie v0.36.8
