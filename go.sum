@@ -4,5 +4,5 @@ github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
 github.com/rogpeppe/go-internal v1.16.0 h1:O9DK+vNMDVGLr2BeZqmpLeMjiMNkuXfcqntWbZV6S5g=
 github.com/rogpeppe/go-internal v1.16.0/go.mod h1:DrUVZyrJU+txYW5/1kwtXQSMFio52ZOxX7yM1VHvnxs=
-github.com/vault-thirteen/auxie v0.36.8 h1:ORyARdYr9ukfipgh+ZmAlOaFXd/hKsEVPCWHOSxdjWc=
-github.com/vault-thirteen/auxie v0.36.8/go.mod h1:uQgKrRlcRQNdEFqzAEnYlxhCYVDhgNZPDJgygOvK0WM=
+github.com/vault-thirteen/auxie v0.36.9 h1:lSwRCSM7q2UHzrdEywcBecGW/lCUAx3Vx9izfBmq8rE=
+github.com/vault-thirteen/auxie v0.36.9/go.mod h1:1H47lwQIorxPY8f9DKFfjxzzPbw2ve01n09w/DOaV5c=
