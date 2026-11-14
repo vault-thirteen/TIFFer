@@ -52,7 +52,7 @@ type SRational = bt.Rational
 //
 // A brief study shows that Go's rationals are always signed. However, the
 // internal types used in the Go's "big.Rat" type, such as "nat" type, use an
-// array of so-called "Word", where their "Word" is a "uint" instead of a
+// array of so-called "Word", where their "Word" is an "uint" instead of a
 // common sense unsigned 32-bit integer. So, the question is difficult. A
 // further study is needed to know about the level of compatibility between the
 // rational types.
